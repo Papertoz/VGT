@@ -8,7 +8,7 @@ const startWorkout = async (req, res) => {
         // Logged in user
         const user = req.user.id;
 
-        // Check if user already has an active workout
+        // 1. Check if user already has an active workout
         const existingWorkout = await WorkoutSession.findOne({
             user,
             status: { $in: ["started", "paused"] }
@@ -21,11 +21,11 @@ const startWorkout = async (req, res) => {
             });
         }
 
-        // Find active weekly plan
+        // 2. Find user's ACTIVE weekly plan
         const weeklyPlan = await WeeklyPlan.findOne({
             user,
             isActive: true
-        }).populate("days.exercises.exercise");
+        });
 
         if (!weeklyPlan) {
             return res.status(404).json({
@@ -34,14 +34,16 @@ const startWorkout = async (req, res) => {
             });
         }
 
-        // Get today's day
+        // 3. Get today's day
         const today = new Date()
-            .toLocaleString("en-US", { weekday: "long" })
+            .toLocaleString("en-US", {
+                weekday: "long"
+            })
             .toLowerCase();
 
-        // Find today's workout
+        // 4. Find today's workout
         const todayWorkout = weeklyPlan.days.find(
-            day => day.day.toLowerCase() === today.toLowerCase()
+            day => day.day.toLowerCase() === today
         );
 
         if (!todayWorkout) {
@@ -51,40 +53,63 @@ const startWorkout = async (req, res) => {
             });
         }
 
-        // Prepare workout exercises
-        const workoutExercises = todayWorkout.exercises.map((exercise, index) => ({
-            exercise: exercise.exercise._id,
-            exerciseOrder: index + 1,
+        // 5. Make sure today has exercises
+        if (
+            !todayWorkout.exercises ||
+            todayWorkout.exercises.length === 0
+        ) {
+            return res.status(404).json({
+                success: false,
+                message: `No exercises scheduled for ${today}.`
+            });
+        }
 
-            plannedDuration: exercise.duration,
-            completedDuration: 0,
+        // 6. Prepare exercises for WorkoutSession
+        const workoutExercises = todayWorkout.exercises.map(
+            (exercise, index) => ({
+                exercise: exercise.exercise,
 
-            plannedSets: exercise.sets,
-            completedSets: 0,
+                exerciseOrder: index + 1,
 
-            plannedReps: exercise.reps,
-            completedReps: 0,
+                plannedDuration: exercise.duration || 0,
+                completedDuration: 0,
 
-            caloriesBurned: 0,
+                plannedSets: exercise.sets || 0,
+                completedSets: 0,
 
-            completed: false,
-            skipped: false
-        }));
+                plannedReps: exercise.reps || 0,
+                completedReps: 0,
 
-        // Create workout session
+                caloriesBurned: 0,
+
+                completed: false,
+                skipped: false
+            })
+        );
+
+        // 7. Create WorkoutSession
         const workoutSession = await WorkoutSession.create({
             user,
+
             weeklyPlan: weeklyPlan._id,
+
             workoutDay: today,
+
             status: "started",
+
             startTime: new Date(),
+
             exercises: workoutExercises
         });
 
-        const session = await WorkoutSession.findById(workoutSession._id)
+        // 8. Populate data for response
+        const session = await WorkoutSession.findById(
+            workoutSession._id
+        )
             .populate("weeklyPlan")
             .populate("exercises.exercise");
 
+        // 9. Send response
         res.status(201).json({
             success: true,
             message: "Workout started successfully.",
@@ -92,6 +117,9 @@ const startWorkout = async (req, res) => {
         });
 
     } catch (err) {
+
+        console.error("Start Workout Error:", err);
+
         res.status(500).json({
             success: false,
             message: err.message
@@ -180,10 +208,15 @@ const completeExercise = async (req, res) => {
                 message: "Workout session not found."
             });
         }
-
+        console.log("Looking for exerciseId:", exerciseId);
+        console.log("Available in session:", workoutSession.exercises.map(e => ({
+            subdocumentId: e._id?.toString(),
+            exerciseRefId: e.exercise?._id ? e.exercise._id.toString() : e.exercise?.toString()
+        })));
         // Find exercise inside workout
         const exercise = workoutSession.exercises.find(
-            ex => ex.exercise.toString() === exerciseId
+            ex => (ex.exercise?._id ? ex.exercise._id.toString() : ex.exercise?.toString()) === exerciseId 
+            || ex._id?.toString() === exerciseId
         );
 
         if (!exercise) {
