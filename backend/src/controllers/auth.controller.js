@@ -88,8 +88,6 @@ const loginuser = async (req, res) => {
     }
 };
 
-
-
 module.exports = {
     registeruser,
     loginuser

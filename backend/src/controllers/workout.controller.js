@@ -215,8 +215,8 @@ const completeExercise = async (req, res) => {
         })));
         // Find exercise inside workout
         const exercise = workoutSession.exercises.find(
-            ex => (ex.exercise?._id ? ex.exercise._id.toString() : ex.exercise?.toString()) === exerciseId 
-            || ex._id?.toString() === exerciseId
+            ex => (ex.exercise?._id ? ex.exercise._id.toString() : ex.exercise?.toString()) === exerciseId
+                || ex._id?.toString() === exerciseId
         );
 
         if (!exercise) {
@@ -236,7 +236,7 @@ const completeExercise = async (req, res) => {
         exercise.caloriesBurned = exerciseData.caloriesPerMinute * (completedDuration || 0);
 
         // Recalculate totals
-        let totalCalories = 0; 
+        let totalCalories = 0;
         let totalDuration = 0;
         let completedCount = 0;
 
@@ -280,8 +280,8 @@ const completeExercise = async (req, res) => {
     }
 };
 
-const skipExercise = async(req, res) => {
-    try{
+const skipExercise = async (req, res) => {
+    try {
         const user = req.user.id;
         const { workoutId, exerciseId } = req.params;
 
@@ -291,7 +291,7 @@ const skipExercise = async(req, res) => {
             status: { $in: ["started", "paused"] }
         });
 
-        if(!workoutSession){
+        if (!workoutSession) {
             return res.status(404).json({
                 success: false,
                 message: "Workout session not found."
@@ -302,11 +302,11 @@ const skipExercise = async(req, res) => {
             ex => ex.exercise.toString() === exerciseId
         );
 
-        if(!exercise){
+        if (!exercise) {
             return res.status(404).json({
                 success: false,
                 message: "Exercise not found."
-            });
+            }); 
         }
 
         exercise.skipped = true;
@@ -322,8 +322,8 @@ const skipExercise = async(req, res) => {
             message: "Exercise skipped successfully.",
             workout: updatedWorkout
         });
-        
-    }catch(err){
+
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -331,8 +331,8 @@ const skipExercise = async(req, res) => {
     }
 };
 
-const pauseWorkout = async(req, res) => {
-    try{
+const pauseWorkout = async (req, res) => {
+    try {
         const user = req.user.id;
         const { workoutId } = req.params;
 
@@ -342,7 +342,7 @@ const pauseWorkout = async(req, res) => {
             status: "started"
         });
 
-        if(!workoutSession){
+        if (!workoutSession) {
             return res.status(404).json({
                 success: false,
                 message: "Workout session not found."
@@ -358,7 +358,7 @@ const pauseWorkout = async(req, res) => {
             workout: workoutSession
         });
 
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -366,8 +366,8 @@ const pauseWorkout = async(req, res) => {
     }
 };
 
-const  resumeWorkout = async(req, res) => {
-    try{
+const resumeWorkout = async (req, res) => {
+    try {
         const user = req.user.id;
         const { workoutId } = req.params;
 
@@ -377,7 +377,7 @@ const  resumeWorkout = async(req, res) => {
             status: "paused"
         });
 
-        if(!workoutSession){
+        if (!workoutSession) {
             return res.status(404).json({
                 success: false,
                 message: "Workout session not found."
@@ -393,7 +393,7 @@ const  resumeWorkout = async(req, res) => {
             workout: workoutSession
         });
 
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -401,8 +401,8 @@ const  resumeWorkout = async(req, res) => {
     }
 };
 
-const finishWorkout = async(req, res) => {
-    try{
+const finishWorkout = async (req, res) => {
+    try {
         const user = req.user.id;
         const { workoutId } = req.params;
 
@@ -412,7 +412,7 @@ const finishWorkout = async(req, res) => {
             status: { $in: ["started", "paused"] }
         });
 
-        if(!workoutSession){
+        if (!workoutSession) {
             return res.status(404).json({
                 success: false,
                 message: "Workout session not found."
@@ -429,7 +429,7 @@ const finishWorkout = async(req, res) => {
             workout: workoutSession
         });
 
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
@@ -437,16 +437,16 @@ const finishWorkout = async(req, res) => {
     }
 };
 
-const getWorkoutHistory = async(req, res) => {
-    try{
+const getWorkoutHistory = async (req, res) => {
+    try {
         const user = req.user.id;
 
         const workoutHistory = await WorkoutSession.find({
             user,
             status: "completed"
         })
-        .populate("weeklyPlan")
-        .sort({ date: -1 });
+            .populate("weeklyPlan")
+            .sort({ date: -1 });
 
         res.status(200).json({
             success: true,
@@ -454,13 +454,13 @@ const getWorkoutHistory = async(req, res) => {
             history: workoutHistory
         });
 
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             success: false,
             message: err.message
         });
     }
-};  
+};
 
 module.exports = {
     startWorkout,

@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema({
     isprofilecomplete:{
         type:Boolean,
         default:false
+    },
+    
+    aiPreferences: {
+        injuries: [String],
+        equipmentAvailable: [String],
+        fitnessGoal: String
     }
 },
     {
