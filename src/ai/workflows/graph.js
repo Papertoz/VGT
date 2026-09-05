@@ -17,7 +17,6 @@ const AgentState = Annotation.Root({
 });
 
 const createSupervisorGraph = (userId, userPreferences) => {
-    
     // Initialize Agents
     const workoutAgent = createWorkoutAgent(userId, userPreferences);
     const nutritionAgent = createNutritionAgent(userPreferences);
@@ -30,7 +29,7 @@ const createSupervisorGraph = (userId, userPreferences) => {
             apiKey: process.env.GEMINI_API_KEY
         });
 
-        const systemPrompt = `You are a Supervisor AI routing user requests to specialized agents.
+    const systemPrompt = `You are a Supervisor AI routing user requests to specialized agents.
 Available Agents:
 - Workout: For questions about exercises, workout plans, adapting workouts, or tracking progress.
 - Nutrition: For questions about diet, protein, calories, meal plans.
