@@ -1,9 +1,8 @@
 const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
 const { createReactAgent } = require("@langchain/langgraph/prebuilt");
 
-const createNutritionAgent = (userPreferences) => {
-    let systemPrompt = "You are a specialized AI Nutrition Coach. Your primary job is to provide dietary advice based on the user's fitness goals.\n";
-    systemPrompt += "You can calculate macros, suggest meal plans, and provide budget-friendly meal suggestions if the user specifies a budget constraint.\n";
+const createProgressAgent = (userPreferences) => {
+    let systemPrompt = "You are a specialized AI Data Analyst for fitness. Your primary job is to analyze workout logs, visualize trends, and provide weekly or monthly summary insights.\n";
     if (userPreferences) {
         systemPrompt += `\nUser Preferences:\n${userPreferences}`;
     }
@@ -14,7 +13,7 @@ const createNutritionAgent = (userPreferences) => {
         apiKey: process.env.GEMINI_API_KEY
     });
 
-    const tools = [];
+    const tools = []; // Add progress-specific tools here
 
     return createReactAgent({
         llm,
@@ -23,4 +22,4 @@ const createNutritionAgent = (userPreferences) => {
     });
 };
 
-module.exports = { createNutritionAgent };
+module.exports = { createProgressAgent };

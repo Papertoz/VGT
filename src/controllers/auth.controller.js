@@ -1,94 +1,59 @@
-const usermodel = require('../models/user.model');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const auth = require("../config/firebase.config");
+const User = require("../models/user.model");
 
-async function registeruser(req,res){
-    try{
-            const {username,email,password} = req.body;
-        
-            const useralreadyexists = await usermodel.findOne({email});
-        
-            if(useralreadyexists){
-                return res.status(400).json({message:"User already exists"});
-            }
-        
-            const hashedpassword = await bcrypt.hash(password,10);
-        
-            const user = await usermodel.create({
-                username,email,password:hashedpassword
-            })
-            
-        
-            const token = jwt.sign({
-                id: user._id,
-            },process.env.JWT_SECRET);
-        
-            res.cookie("token",token);
-        
-            res.status(201).json({
-        
-                message: "User registered successfully",
-                user,
-                token
-            });
-    }
-    catch(err){
-        res.status(500).json({
-            message: err.message
-        });
-    }
-}
-const loginuser = async (req, res) => {
-
+const firebaseLogin = async (req, res) => {
     try {
+        const { idToken, username } = req.body;
+        
+        if (!idToken) {
+            return res.status(400).json({ message: "Firebase ID token is required" });
+        }
 
-        const { email, password } = req.body;
+        // Verify the token with Firebase Admin
+        const decodedToken = await auth.verifyIdToken(idToken);
+        const { uid, email, name, picture } = decodedToken;
 
-        const user = await usermodel.findOne({ email });
+        // 1. Check if user already exists by firebaseUid
+        let user = await User.findOne({ firebaseUid: uid });
 
         if (!user) {
-            return res.status(400).json({
-                message: "User not found"
-            });
+            // 2. Fallback: check if they exist by email (legacy user before Firebase migration)
+            user = await User.findOne({ email });
+            
+            if (user) {
+                // Link their legacy account to the new Firebase UID
+                user.firebaseUid = uid;
+                await user.save();
+            } else {
+                // 3. Create a brand new user
+                user = await User.create({
+                    firebaseUid: uid,
+                    email: email,
+                    username: username || name || email.split("@")[0], // Generate a fallback username
+                    fullname: name || "",
+                    profilePicture: picture || ""
+                });
+            }
         }
 
-        const isMatch = await bcrypt.compare(
-            password,
-            user.password
-        );
-
-        if (!isMatch) {
-            return res.status(400).json({
-                message: "Invalid credentials"
-            });
-        }
-
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET
-        );
-
-        res.cookie("token", token);
-
+        // Return user info. Note: We don't need to generate a JWT here because 
+        // the frontend will continue to send the Firebase idToken for future requests.
         res.status(200).json({
             message: "Login successful",
-            token,
             user: {
                 id: user._id,
+                firebaseUid: user.firebaseUid,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                profilePicture: user.profilePicture
             }
         });
-
-    } catch (err) {
-
-        res.status(500).json({
-            message: err.message
-        });
+    } catch (error) {
+        console.error("Firebase Login Error:", error);
+        res.status(401).json({ message: "Invalid or expired Firebase token" });
     }
 };
 
 module.exports = {
-    registeruser,
-    loginuser
+    firebaseLogin
 };

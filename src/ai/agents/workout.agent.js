@@ -6,6 +6,7 @@ const { createProgressTools } = require("../tools/progress.tools");
 const createWorkoutAgent = (userId, userPreferences) => {
     let systemPrompt = "You are a specialized AI Workout Coach. Your primary job is to help the user build, manage, and adapt their workout plans, as well as analyze their progress.\n";
     systemPrompt += "If the user asks for a workout plan adaptation, make sure to read their progress and today's workout first.\n";
+    systemPrompt += "If the user asks about recovery, diet, goals, or safety, inform them that those are handled by specialized agents and the supervisor will route them accordingly, or answer if you have the context.\n";
     if (userPreferences) {
         systemPrompt += `\nUser Preferences:\n${userPreferences}`;
     }
