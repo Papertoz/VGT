@@ -1,5 +1,14 @@
 const { tool } = require("@langchain/core/tools");
-const { getTodayWorkoutSchema, getWorkoutHistorySchema, adaptWorkoutSchema } = require("../schemas/workout.tools.schema");
+const { 
+    getTodayWorkoutSchema, 
+    getWorkoutHistorySchema, 
+    adaptWorkoutSchema,
+    searchExercisesSchema,
+    createExerciseSchema,
+    createWeeklyPlanSchema,
+    getWeeklyPlansSchema
+} = require("../schemas/workout.tools.schema");
+const Exercise = require("../../models/exercise.model");
 const weeklyPlanService = require("../../services/weeklyPlan.service");
 const workoutService = require("../../services/workout.service");
 
@@ -58,7 +67,83 @@ const createWorkoutTools = (userId) => {
         }
     );
 
-    return [getTodayWorkoutTool, getWorkoutHistoryTool, adaptWorkoutTool];
+    const searchExercisesTool = tool(
+        async ({ query, muscleGroup }) => {
+            try {
+                let filter = {};
+                if (query) filter.name = { $regex: query, $options: "i" };
+                if (muscleGroup) filter.muscleGroup = { $regex: muscleGroup, $options: "i" };
+                
+                const exercises = await Exercise.find(filter).limit(20);
+                return JSON.stringify(exercises.map(e => ({ id: e._id, name: e.name, muscleGroup: e.muscleGroup, caloriesPerMinute: e.caloriesPerMinute })));
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
+        },
+        {
+            name: "searchExercises",
+            description: "Search for exercises in the database by name or muscle group to get their ObjectIds.",
+            schema: searchExercisesSchema
+        }
+    );
+
+    const createExerciseTool = tool(
+        async ({ name, muscleGroup, description, caloriesPerMinute }) => {
+            try {
+                const exercise = await Exercise.create({ name, muscleGroup, description, caloriesPerMinute });
+                return JSON.stringify({ success: true, id: exercise._id, name: exercise.name });
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
+        },
+        {
+            name: "createExercise",
+            description: "Create a new exercise in the database if it doesn't already exist.",
+            schema: createExerciseSchema
+        }
+    );
+
+    const createWeeklyPlanTool = tool(
+        async (planData) => {
+            try {
+                const result = await weeklyPlanService.createPlan(userId, planData);
+                return JSON.stringify({ success: true, planId: result._id, planName: result.planName });
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
+        },
+        {
+            name: "createWeeklyPlan",
+            description: "Create and save a new weekly workout plan for the user.",
+            schema: createWeeklyPlanSchema
+        }
+    );
+
+    const getWeeklyPlansTool = tool(
+        async () => {
+            try {
+                const plans = await weeklyPlanService.getPlans(userId);
+                return JSON.stringify(plans.map(p => ({ id: p._id, name: p.planName, isActive: p.isActive, description: p.description })));
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
+        },
+        {
+            name: "getWeeklyPlans",
+            description: "Retrieve all weekly plans saved for the user.",
+            schema: getWeeklyPlansSchema
+        }
+    );
+
+    return [
+        getTodayWorkoutTool, 
+        getWorkoutHistoryTool, 
+        adaptWorkoutTool,
+        searchExercisesTool,
+        createExerciseTool,
+        createWeeklyPlanTool,
+        getWeeklyPlansTool
+    ];
 };
 
 module.exports = {
