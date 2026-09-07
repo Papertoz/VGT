@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon --env-file=.env server.js",
+    "start": "npx nodemon --env-file=../.env server.js",
     "worker": "node src/worker.js"
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "bcrypt": "^6.0.0",
     "bullmq": "^6.3.4",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "firebase-admin": "^14.3.0",

@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const cookieParser = require('cookie-parser');
 const postRoutes = require('./routes/post.routes');
@@ -7,6 +8,11 @@ const weeklyPlanRoutes = require("./routes/weeklyPlan.routes");
 const workoutRoutes = require("./routes/workout.routes");
 const aiRoutes = require("./routes/ai.routes");
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Vite default port
+    credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 

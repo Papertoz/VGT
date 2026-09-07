@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Core Palette */
+  --bg-color: #f4f4f0;
+  --accent-color: #e53e3e;
+  --accent-hover: #c53030;
+  --accent-glow: rgba(229, 62, 62, 0.25);
+
+  /* Text */
+  --text-primary: #111111;
+  --text-inverse: #ffffff;
+  --text-secondary: #888888;
+
+  /* Glassmorphism Tokens */
+  --glass-bg: rgba(17, 17, 17, 0.55);
+  --glass-bg-light: rgba(255, 255, 255, 0.12);
+  --glass-bg-white: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-dark: rgba(0, 0, 0, 0.3);
+  --glass-blur: blur(18px);
+  --glass-blur-light: blur(10px);
+
+  /* Surfaces */
+  --surface-color: #111111;
+  --surface-color-light: #1e1e1e;
+  --border-color: #dddddd;
+  --border-inverse: #333333;
+
+  /* Layout */
+  --sidebar-width: 280px;
+  --ai-sidebar-width: 360px;
+}
+
+/* ===================== RESET ===================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================== TYPOGRAPHY ===================== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Anton', sans-serif;
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: 1px;
+}
+h1 { font-size: 5rem; }
+h2 { font-size: 3rem; }
+h3 { font-size: 2rem; }
+p { font-weight: 500; }
+
+/* ===================== LAYOUT ===================== */
+.app-container { min-height: 100vh; display: flex; }
+.main-content { flex: 1; padding: 4rem; overflow-y: auto; background: var(--bg-color); }
+
+/* ===================== GLASSMORPHISM CARDS ===================== */
+
+/* Dark glass (on beige bg — default for inner pages) */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  padding: 2rem;
+  color: var(--text-inverse);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Light glass (white tinted, for bright sections) */
+.card-light {
+  background: var(--glass-bg-white);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(0,0,0,0.12);
+  padding: 2rem;
+  color: var(--text-primary);
+}
+
+/* Generic utility glass class */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* Glowing red border variant */
+.card-glow {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 0 30px var(--accent-glow), inset 0 0 30px rgba(229,62,62,0.04);
+  padding: 2rem;
+  color: var(--text-inverse);
+}
+
+/* ===================== BUTTONS ===================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.8rem;
+  border-radius: 0;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+.btn-primary {
+  background-color: var(--accent-color);
+  color: #ffffff;
+}
+.btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  color: #fff;
+  border: 1px solid var(--glass-border);
+}
+.btn-secondary:hover { background: var(--surface-color-light); border-color: rgba(255,255,255,0.3); }
+
+/* ===================== INPUTS ===================== */
+.input-field {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s ease;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.input-field::placeholder { color: #888; }
+.input-field option { background: #222; color: #fff; }
+
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(229,62,62,0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }

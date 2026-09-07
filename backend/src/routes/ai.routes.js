@@ -11,3 +11,4 @@ router.post("/evaluate-goal", authMiddleware, evaluateGoal);
 router.post("/safety-check", authMiddleware, checkSafety);
 
 module.exports = router;
+ 

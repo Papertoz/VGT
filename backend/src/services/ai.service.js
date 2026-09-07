@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const WorkoutSession = require("../models/workout.model");
 const { createSupervisorGraph } = require("../ai/workflows/graph");
 const { HumanMessage } = require("@langchain/core/messages");
 
@@ -38,13 +39,42 @@ const generateChatResponse = async (userId, userMessage) => {
     }
 };
 
+const getRecentWorkoutLogs = async (userId, limit = 5) => {
+    const workouts = await WorkoutSession.find({ user: userId, status: "completed" })
+        .sort({ date: -1 })
+        .limit(limit)
+        .populate("exercises.exercise", "name");
+    
+    if (!workouts || workouts.length === 0) {
+        return "I do not have any recent completed workout logs.";
+    }
+
+    let logs = "Here are my recent workout logs:\n";
+    workouts.forEach((w, index) => {
+        const dateStr = w.date ? w.date.toISOString().split('T')[0] : 'Unknown date';
+        logs += `\nWorkout ${index + 1} (${dateStr}):\n`;
+        logs += `- Duration: ${w.totalDuration || 0} mins, Calories Burned: ${w.totalCaloriesBurned || 0}\n`;
+        if (w.exercises && w.exercises.length > 0) {
+            logs += `- Exercises:\n`;
+            w.exercises.forEach(ex => {
+                const exName = ex.exercise && ex.exercise.name ? ex.exercise.name : "Unknown Exercise";
+                logs += `  * ${exName}: ${ex.completedSets || 0} sets, ${ex.completedReps || 0} reps\n`;
+            });
+        }
+    });
+    return logs;
+};
+
 const generateProgressReport = async (userId) => {
     try {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
         
+        const logs = await getRecentWorkoutLogs(userId, 10);
+        const prompt = `Please generate my latest progress report based on my workout history. ${logs}`;
+
         const agent = createProgressAgent(getUserPreferences(user));
-        const result = await agent.invoke({ messages: [new HumanMessage("Please generate my latest progress report based on my workout history.")] });
+        const result = await agent.invoke({ messages: [new HumanMessage(prompt)] });
         return result.messages[result.messages.length - 1].content;
     } catch (error) {
         throw new Error("Failed to generate progress report: " + error.message);
@@ -56,8 +86,11 @@ const getRecoverySuggestions = async (userId) => {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
         
+        const logs = await getRecentWorkoutLogs(userId, 3);
+        const prompt = `What should I do for recovery today based on my recent activity? ${logs}`;
+
         const agent = createRecoveryAgent(getUserPreferences(user));
-        const result = await agent.invoke({ messages: [new HumanMessage("What should I do for recovery today based on my recent activity?")] });
+        const result = await agent.invoke({ messages: [new HumanMessage(prompt)] });
         return result.messages[result.messages.length - 1].content;
     } catch (error) {
         throw new Error("Failed to get recovery suggestions: " + error.message);
