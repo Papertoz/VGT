@@ -4,20 +4,20 @@ import { useAuth } from '../context/AuthContext';
 import { Send, Bot, User, Zap, Target, HeartPulse, Dumbbell } from 'lucide-react';
 
 const SUGGESTED_PROMPTS = [
-  { icon: <Target size={18} />, text: "Evaluate if my goal is realistic and safe" },
-  { icon: <Dumbbell size={18} />, text: "Plan a 4-day push/pull split for me" },
-  { icon: <HeartPulse size={18} />, text: "What should I do for recovery today?" },
-  { icon: <Zap size={18} />, text: "Best exercises for muscle growth as a beginner?" },
+  { icon: <Target size={16} />, text: "Evaluate if my goal is realistic and safe" },
+  { icon: <Dumbbell size={16} />, text: "Plan a 4-day push/pull split for me" },
+  { icon: <HeartPulse size={16} />, text: "What should I do for recovery today?" },
+  { icon: <Zap size={16} />, text: "Best exercises for muscle growth as a beginner?" },
 ];
 
 const TypingIndicator = () => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '1rem 1.5rem' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.75rem 1rem' }}>
     {[0, 1, 2].map(i => (
       <motion.div
         key={i}
-        animate={{ y: [0, -6, 0] }}
-        transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
-        style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-color)' }}
+        animate={{ y: [0, -5, 0] }}
+        transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
+        style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)' }}
       />
     ))}
   </div>
@@ -28,40 +28,30 @@ const MessageBubble = ({ msg, index }) => {
   return (
     <motion.div
       key={index}
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25 }}
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'flex-start',
+        display: 'flex', gap: '0.75rem', alignItems: 'flex-start',
         flexDirection: isUser ? 'row-reverse' : 'row',
-        maxWidth: '80%',
-        alignSelf: isUser ? 'flex-end' : 'flex-start',
+        maxWidth: '80%', alignSelf: isUser ? 'flex-end' : 'flex-start',
       }}
     >
-      {/* Avatar */}
       <div style={{
-        width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-        background: isUser ? 'var(--accent-color)' : 'rgba(255,255,255,0.1)',
-        border: isUser ? '2px solid var(--accent-color)' : '2px solid rgba(255,255,255,0.15)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
+        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+        background: isUser ? 'var(--gradient-accent)' : 'var(--glass-bg-light)',
+        border: `1px solid ${isUser ? 'var(--accent)' : 'var(--border-light)'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        {isUser ? <User size={16} color="#fff" /> : <Bot size={16} color="var(--accent-color)" />}
+        {isUser ? <User size={14} color="#fff" /> : <Bot size={14} color="var(--accent)" />}
       </div>
-
-      {/* Bubble */}
       <div style={{
-        padding: '1rem 1.5rem',
-        background: isUser
-          ? 'var(--accent-color)'
-          : 'rgba(255,255,255,0.06)',
-        border: isUser ? 'none' : '1px solid rgba(255,255,255,0.1)',
-        backdropFilter: 'blur(10px)',
-        color: '#ffffff',
-        fontSize: '0.95rem',
-        lineHeight: 1.7,
-        whiteSpace: 'pre-wrap',
+        padding: '0.75rem 1rem',
+        background: isUser ? 'var(--gradient-accent)' : 'var(--glass-bg-card)',
+        border: isUser ? 'none' : '1px solid var(--border-light)',
+        borderRadius: isUser ? 'var(--radius-md) var(--radius-md) 4px var(--radius-md)' : 'var(--radius-md) var(--radius-md) var(--radius-md) 4px',
+        color: isUser ? '#ffffff' : 'var(--text-primary)',
+        fontSize: '0.85rem', lineHeight: 1.7, whiteSpace: 'pre-wrap',
       }}>
         {msg.content}
       </div>
@@ -123,55 +113,64 @@ const AIChat = () => {
 
   return (
     <div style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: '#0a0a0a',
-      position: 'relative',
-      overflow: 'hidden'
+      height: '100vh', display: 'flex', flexDirection: 'column',
+      background: 'var(--bg-primary)', position: 'relative', overflow: 'hidden',
     }}>
-      {/* Subtle red glow bg */}
+      {/* Subtle blue glow */}
       <div style={{
         position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)',
-        width: '600px', height: '400px',
-        background: 'radial-gradient(circle, rgba(229,62,62,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none', zIndex: 0
+        width: '500px', height: '350px',
+        background: 'radial-gradient(circle, var(--accent-glow) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
       }} />
 
       {/* Header */}
       <div style={{
-        padding: '1.5rem 2rem',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-        display: 'flex', alignItems: 'center', gap: '1rem',
-        background: 'rgba(255,255,255,0.03)',
-        backdropFilter: 'blur(10px)',
-        zIndex: 10, position: 'relative'
+        padding: '1rem 1.5rem',
+        borderBottom: '1px solid var(--border)',
+        display: 'flex', alignItems: 'center', gap: '0.75rem',
+        background: 'var(--glass-bg)', backdropFilter: 'var(--glass-blur-light)',
+        zIndex: 10, position: 'relative',
       }}>
-        <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--accent-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px var(--accent-glow)' }}>
-          <Bot size={22} color="#fff" />
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'var(--gradient-accent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: 'var(--shadow-glow)',
+        }}>
+          <Bot size={18} color="#fff" />
         </div>
         <div>
-          <h3 style={{ margin: 0, color: '#fff', fontFamily: 'Anton', fontSize: '1.4rem', letterSpacing: '2px' }}>VGT AI COACH</h3>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--accent-color)', fontWeight: 700 }}>● ONLINE</p>
+          <h3 style={{ margin: 0, color: 'var(--text-primary)', fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 700 }}>VGT AI Coach</h3>
+          <p style={{ margin: 0, fontSize: '0.68rem', color: 'var(--accent)', fontWeight: 600 }}>● Online</p>
         </div>
       </div>
 
-      {/* Messages Area */}
+      {/* Messages */}
       <div style={{
-        flex: 1, overflowY: 'auto', padding: '2rem',
-        display: 'flex', flexDirection: 'column', gap: '1.5rem',
-        position: 'relative', zIndex: 10
+        flex: 1, overflowY: 'auto', padding: '1.5rem',
+        display: 'flex', flexDirection: 'column', gap: '1rem',
+        position: 'relative', zIndex: 10,
       }}>
         {messages.map((msg, i) => (
           <MessageBubble key={i} msg={msg} index={i} />
         ))}
 
         {loading && (
-          <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bot size={16} color="var(--accent-color)" />
+          <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: 'var(--glass-bg-light)',
+              border: '1px solid var(--border-light)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <Bot size={14} color="var(--accent)" />
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+            <div style={{
+              background: 'var(--glass-bg-card)',
+              border: '1px solid var(--border-light)',
+              borderRadius: 'var(--radius-md)',
+            }}>
               <TypingIndicator />
             </div>
           </div>
@@ -180,32 +179,33 @@ const AIChat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Suggested Prompts — shown when chat is fresh */}
+      {/* Suggested Prompts */}
       <AnimatePresence>
         {isFirstMessage && !loading && (
           <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, y: 20 }}
-            style={{ padding: '0 2rem 1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', zIndex: 10 }}
+            initial={{ opacity: 1 }} exit={{ opacity: 0, y: 20 }}
+            style={{
+              padding: '0 1.5rem 1rem',
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', zIndex: 10,
+            }}
           >
             {SUGGESTED_PROMPTS.map((p, i) => (
               <button
                 key={i}
                 onClick={() => sendMessage(p.text)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '0.75rem',
-                  padding: '0.9rem 1.2rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(10px)',
-                  color: '#ccc', cursor: 'pointer', textAlign: 'left',
-                  fontSize: '0.85rem', fontWeight: 600,
-                  transition: 'all 0.2s',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  padding: '0.6rem 0.8rem',
+                  background: 'var(--glass-bg-light)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'var(--text-secondary)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '0.78rem', fontWeight: 500, transition: 'all var(--transition)',
                 }}
-                onMouseEnter={e => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.color = '#fff'; }}
-                onMouseLeave={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.color = '#ccc'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-light)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
               >
-                <span style={{ color: 'var(--accent-color)' }}>{p.icon}</span>
+                <span style={{ color: 'var(--accent)', flexShrink: 0 }}>{p.icon}</span>
                 {p.text}
               </button>
             ))}
@@ -213,15 +213,14 @@ const AIChat = () => {
         )}
       </AnimatePresence>
 
-      {/* Input Area */}
+      {/* Input */}
       <div style={{
-        padding: '1.5rem 2rem',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        background: 'rgba(255,255,255,0.03)',
-        backdropFilter: 'blur(10px)',
-        zIndex: 10
+        padding: '1rem 1.5rem',
+        borderTop: '1px solid var(--border)',
+        background: 'var(--glass-bg)', backdropFilter: 'var(--glass-blur-light)',
+        zIndex: 10,
       }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1rem', maxWidth: '1000px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', maxWidth: '900px', margin: '0 auto' }}>
           <input
             ref={inputRef}
             type="text"
@@ -229,39 +228,22 @@ const AIChat = () => {
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about workouts, goals, recovery, nutrition..."
             disabled={loading}
-            style={{
-              flex: 1,
-              padding: '1rem 1.5rem',
-              background: 'rgba(255,255,255,0.07)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              backdropFilter: 'blur(10px)',
-              color: '#fff',
-              fontSize: '1rem',
-              outline: 'none',
-              fontFamily: 'Inter',
-            }}
-            onFocus={e => e.target.style.borderColor = 'var(--accent-color)'}
-            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
+            className="input-field"
+            style={{ flex: 1, padding: '0.75rem 1rem' }}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
+            className="btn btn-primary"
             style={{
-              padding: '1rem 2rem',
-              background: input.trim() ? 'var(--accent-color)' : 'rgba(255,255,255,0.1)',
-              border: 'none',
-              color: '#fff',
-              cursor: input.trim() ? 'pointer' : 'not-allowed',
-              transition: 'all 0.2s',
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              fontWeight: 700, fontSize: '0.85rem', letterSpacing: '1px',
-              fontFamily: 'Inter',
+              padding: '0.75rem 1.25rem',
+              opacity: input.trim() ? 1 : 0.5,
             }}
           >
-            <Send size={18} /> SEND
+            <Send size={16} /> Send
           </button>
         </form>
-        <p style={{ textAlign: 'center', marginTop: '0.75rem', fontSize: '0.75rem', color: '#555' }}>
+        <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.65rem', color: 'var(--text-muted)' }}>
           VGT AI can make mistakes. Always verify with a qualified trainer.
         </p>
       </div>

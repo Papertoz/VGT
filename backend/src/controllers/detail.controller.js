@@ -6,14 +6,19 @@ const updateDetails = async (req, res) => {
     console.log("IMAGEKIT OBJECT:", imagekit);
     try {
 
-        const {
+        let {
             fullname,
             weight,
             height,
             age,
             gender,
-            level
+            level,
+            aiPreferences
         } = req.body;
+
+        if (typeof aiPreferences === 'string') {
+            try { aiPreferences = JSON.parse(aiPreferences); } catch(e){}
+        }
 
         let profilePicture;
 
@@ -48,6 +53,7 @@ const updateDetails = async (req, res) => {
         if (age !== undefined) updateData.age = age;
         if (gender !== undefined) updateData.gender = gender;
         if (level !== undefined) updateData.level = level;
+        if (aiPreferences !== undefined) updateData.aiPreferences = aiPreferences;
 
         const user = await User.findByIdAndUpdate(
             req.user.id,

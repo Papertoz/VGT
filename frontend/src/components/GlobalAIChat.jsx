@@ -4,10 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { Send, Bot, User, X } from 'lucide-react';
 
 const TypingDots = () => (
-  <div style={{ display: 'flex', gap: '0.3rem', padding: '0.5rem' }}>
+  <div style={{ display: 'flex', gap: '0.25rem', padding: '0.4rem' }}>
     {[0, 1, 2].map(i => (
-      <motion.div key={i} animate={{ y: [0, -5, 0] }} transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
-        style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent-color)' }} />
+      <motion.div key={i} animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+        style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)' }} />
     ))}
   </div>
 );
@@ -58,68 +58,92 @@ const GlobalAIChat = ({ isOpen, onClose }) => {
           style={{
             position: 'fixed', top: 0, right: 0, bottom: 0,
             width: 'var(--ai-sidebar-width)',
-            background: 'rgba(8, 8, 8, 0.92)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderLeft: '1px solid rgba(229, 62, 62, 0.25)',
+            background: 'var(--glass-bg-card)',
+            backdropFilter: 'var(--glass-blur)',
+            WebkitBackdropFilter: 'var(--glass-blur)',
+            borderLeft: '1px solid var(--border-accent)',
             zIndex: 200, display: 'flex', flexDirection: 'column',
-            boxShadow: '-10px 0 50px rgba(0,0,0,0.5)'
+            boxShadow: '-10px 0 50px rgba(0,0,0,0.3)',
           }}
         >
           {/* Header */}
-          <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 15px var(--accent-glow)' }}>
-                <Bot size={18} color="#fff" />
+          <div style={{
+            padding: '1rem', borderBottom: '1px solid var(--border)',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{
+                width: 30, height: 30, borderRadius: '50%',
+                background: 'var(--gradient-accent)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: 'var(--shadow-glow)',
+              }}>
+                <Bot size={14} color="#fff" />
               </div>
               <div>
-                <h4 style={{ margin: 0, color: '#fff', fontFamily: 'Anton', fontSize: '1.1rem', letterSpacing: '1px' }}>VGT AI COACH</h4>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--accent-color)', fontWeight: 700 }}>● ONLINE</p>
+                <h4 style={{ margin: 0, color: 'var(--text-primary)', fontFamily: 'Outfit', fontSize: '0.85rem', fontWeight: 700 }}>AI Coach</h4>
+                <p style={{ margin: 0, fontSize: '0.6rem', color: 'var(--accent)', fontWeight: 600 }}>● Online</p>
               </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '0.25rem' }}>
-              <X size={20} />
+            <button onClick={onClose} style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: 'var(--text-muted)', padding: '0.2rem',
+            }}>
+              <X size={18} />
             </button>
           </div>
 
           {/* Messages */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{
+            flex: 1, overflowY: 'auto', padding: '1rem',
+            display: 'flex', flexDirection: 'column', gap: '0.75rem',
+          }}>
             {messages.map((msg, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{
-                  display: 'flex',
-                  gap: '0.75rem',
+                  display: 'flex', gap: '0.5rem',
                   flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
                   alignItems: 'flex-start',
                   alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '90%'
+                  maxWidth: '90%',
                 }}
               >
-                <div style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0, background: msg.role === 'user' ? 'var(--accent-color)' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {msg.role === 'user' ? <User size={13} color="#fff" /> : <Bot size={13} color="var(--accent-color)" />}
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%', flexShrink: 0,
+                  background: msg.role === 'user' ? 'var(--gradient-accent)' : 'var(--glass-bg-light)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {msg.role === 'user' ? <User size={11} color="#fff" /> : <Bot size={11} color="var(--accent)" />}
                 </div>
                 <div style={{
-                  padding: '0.75rem 1rem',
-                  background: msg.role === 'user' ? 'var(--accent-color)' : 'rgba(255,255,255,0.07)',
-                  border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                  color: '#ffffff',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-wrap'
+                  padding: '0.5rem 0.75rem',
+                  background: msg.role === 'user' ? 'var(--gradient-accent)' : 'var(--glass-bg-light)',
+                  border: msg.role === 'user' ? 'none' : '1px solid var(--border-light)',
+                  borderRadius: msg.role === 'user' ? 'var(--radius-sm) var(--radius-sm) 2px var(--radius-sm)' : 'var(--radius-sm) var(--radius-sm) var(--radius-sm) 2px',
+                  color: msg.role === 'user' ? '#ffffff' : 'var(--text-primary)',
+                  fontSize: '0.78rem', lineHeight: 1.6, whiteSpace: 'pre-wrap',
                 }}>
                   {msg.content}
                 </div>
               </motion.div>
             ))}
             {loading && (
-              <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-                <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Bot size={13} color="var(--accent-color)" />
+              <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%',
+                  background: 'var(--glass-bg-light)', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <Bot size={11} color="var(--accent)" />
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.25rem 0.5rem' }}>
+                <div style={{
+                  background: 'var(--glass-bg-light)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-sm)', padding: '0.15rem 0.4rem',
+                }}>
                   <TypingDots />
                 </div>
               </div>
@@ -128,32 +152,25 @@ const GlobalAIChat = ({ isOpen, onClose }) => {
           </div>
 
           {/* Input */}
-          <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ padding: '0.75rem', borderTop: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', gap: '0.35rem' }}>
               <input
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && handleSend()}
                 placeholder="Ask your coach..."
-                style={{
-                  flex: 1, padding: '0.8rem 1rem',
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  color: '#fff', fontSize: '0.9rem', outline: 'none', fontFamily: 'Inter'
-                }}
-                onFocus={e => e.target.style.borderColor = 'var(--accent-color)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
+                className="input-field"
+                style={{ flex: 1, padding: '0.6rem 0.75rem', fontSize: '0.82rem' }}
               />
               <button
                 onClick={handleSend}
                 disabled={loading || !input.trim()}
+                className="btn btn-primary"
                 style={{
-                  padding: '0.8rem', background: 'var(--accent-color)', border: 'none',
-                  color: '#fff', cursor: input.trim() ? 'pointer' : 'not-allowed',
-                  opacity: input.trim() ? 1 : 0.5
+                  padding: '0.6rem', opacity: input.trim() ? 1 : 0.5,
                 }}
               >
-                <Send size={18} />
+                <Send size={14} />
               </button>
             </div>
           </div>

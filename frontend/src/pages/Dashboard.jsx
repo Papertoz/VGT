@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, MessageSquare, TrendingUp, HeartPulse, Play, Settings } from 'lucide-react';
+import GlassCard from '../components/GlassCard';
+import ParticleField from '../components/ParticleField';
+import { Activity, TrendingUp, HeartPulse, Play, Settings, Zap, Calendar } from 'lucide-react';
+
+const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
 const Dashboard = () => {
   const { currentUser, userProfile, token } = useAuth();
@@ -43,109 +47,215 @@ const Dashboard = () => {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'GOOD MORNING';
-    if (hour < 18) return 'GOOD AFTERNOON';
-    return 'GOOD EVENING';
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
   };
 
   return (
-    <div className="main-content">
-      <div style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        <div>
-          <h1 style={{ fontSize: '4rem', marginBottom: '0.5rem', color: 'var(--accent-color)' }}>
-            {getGreeting()},<br/><span style={{ color: '#111' }}>{userProfile?.fullname?.split(' ')[0] || 'ATHLETE'}.</span>
-          </h1>
-          <p style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '1px' }}>YOUR DAILY TRAINING BRIEFING.</p>
-        </div>
-        <button className="btn btn-secondary" style={{ background: '#fff', color: '#111', border: '1px solid #111' }} onClick={() => alert('Profile settings coming soon')}>
-          <Settings size={18} /> SETTINGS
-        </button>
-      </div>
+    <div className="main-content" style={{ position: 'relative' }}>
+      <ParticleField particleCount={35} style={{ opacity: 0.5 }} />
 
-      {/* Profile Overview Card (Light) */}
-      {userProfile && (
-        <div className="card-light" style={{ marginBottom: '2rem', display: 'flex', gap: '4rem', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '2px' }}>CURRENT STATS</p>
-            <div style={{ display: 'flex', gap: '3rem', marginTop: '1rem' }}>
-              <div>
-                <span style={{ fontSize: '2.5rem', fontFamily: 'Anton', lineHeight: 1 }}>{userProfile.weight}</span><span style={{ color: 'var(--text-secondary)', fontWeight: 700, marginLeft: '0.2rem' }}>KG</span>
-              </div>
-              <div>
-                <span style={{ fontSize: '2.5rem', fontFamily: 'Anton', lineHeight: 1 }}>{userProfile.height}</span><span style={{ color: 'var(--text-secondary)', fontWeight: 700, marginLeft: '0.2rem' }}>CM</span>
-              </div>
-              <div>
-                <span style={{ fontSize: '2.5rem', fontFamily: 'Anton', lineHeight: 1, color: 'var(--accent-color)' }}>{userProfile.level}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <div style={{ position: 'relative', zIndex: 10 }}>
+        {/* Header */}
+        <motion.div
+          initial="hidden" animate="visible" variants={{
+            visible: { transition: { staggerChildren: 0.1 } }
+          }}
+          style={{
+            marginBottom: '2rem',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+          }}
+        >
+          <motion.div variants={fadeUp}>
+            <p style={{
+              fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent)',
+              textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.25rem',
+            }}>
+              {getGreeting()}
+            </p>
+            <h1 style={{
+              fontSize: '2.2rem', color: 'var(--text-primary)', marginBottom: '0.25rem',
+            }}>
+              {userProfile?.fullname?.split(' ')[0] || 'Athlete'}
+            </h1>
+            <p style={{ fontSize: '0.85rem' }}>Your daily training briefing.</p>
+          </motion.div>
 
-      {/* Workout of the Day Highlight (Stark Black) */}
-      <div className="card" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderLeft: '8px solid var(--accent-color)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ background: 'var(--accent-color)', padding: '1rem' }}>
-            <Play size={32} color="#fff" />
-          </div>
-          <div>
-            <h3 style={{ margin: 0, color: 'var(--accent-color)', fontSize: '1rem', letterSpacing: '2px' }}>WORKOUT OF THE DAY</h3>
-            <h2 style={{ margin: 0, fontSize: '3rem', color: '#fff' }}>{todayWorkout ? todayWorkout.name : (loading ? 'LOADING...' : 'REST DAY')}</h2>
-          </div>
-        </div>
-        
-        <p style={{ color: '#aaa', maxWidth: '600px', fontSize: '1.1rem' }}>
-          {todayWorkout 
-            ? `You have ${todayWorkout.exercises?.length || 0} exercises scheduled for today. Ready to crush it?` 
-            : 'No active plan or scheduled workout for today. Enjoy your rest or create a new plan.'}
-        </p>
+          <motion.div variants={fadeUp}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings size={16} /> Settings
+            </button>
+          </motion.div>
+        </motion.div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <button 
-            className="btn btn-primary" 
-            onClick={() => navigate('/workout')}
-            disabled={!todayWorkout}
-            style={{ padding: '1.2rem 3rem', fontSize: '1.2rem' }}
+        {/* Stats Strip */}
+        {userProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            style={{
+              display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '1rem', marginBottom: '1.5rem',
+            }}
           >
-            START TRAINING
-          </button>
-          <button className="btn btn-secondary" style={{ background: '#333', color: '#fff', border: 'none' }} onClick={() => navigate('/weekly-plans')}>
-            MANAGE PLANS
-          </button>
+            {[
+              { label: 'Weight', value: `${userProfile.weight || '--'}`, unit: 'KG' },
+              { label: 'Height', value: `${userProfile.height || '--'}`, unit: 'CM' },
+              { label: 'Level', value: userProfile.level || '--', unit: '' },
+              { label: 'Goal', value: userProfile.aiPreferences?.fitnessGoal || '--', unit: '' },
+            ].map((stat, i) => (
+              <GlassCard key={i} variant="light" style={{ padding: '1rem' }}>
+                <p style={{
+                  fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)',
+                  textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem',
+                }}>{stat.label}</p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                  <span style={{
+                    fontFamily: 'Outfit', fontSize: '1.5rem', fontWeight: 800,
+                    color: 'var(--text-primary)', lineHeight: 1, textTransform: 'capitalize',
+                  }}>{stat.value}</span>
+                  {stat.unit && (
+                    <span style={{
+                      fontSize: '0.72rem', color: 'var(--accent)', fontWeight: 600,
+                    }}>{stat.unit}</span>
+                  )}
+                </div>
+              </GlassCard>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Workout of the Day */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <GlassCard
+            variant="glow"
+            style={{
+              marginBottom: '1.5rem',
+              borderLeft: '4px solid var(--accent)',
+              borderRadius: 'var(--radius-md)',
+            }}
+          >
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem',
+            }}>
+              <button 
+                onClick={() => navigate('/workout')}
+                disabled={!todayWorkout || todayWorkout.length === 0}
+                style={{
+                  width: 44, height: 44, borderRadius: 'var(--radius-sm)',
+                  background: (!todayWorkout || todayWorkout.length === 0) ? 'var(--glass-bg-light)' : 'var(--gradient-accent)',
+                  border: 'none', cursor: (!todayWorkout || todayWorkout.length === 0) ? 'default' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  opacity: (!todayWorkout || todayWorkout.length === 0) ? 0.5 : 1
+              }}>
+                <Play size={20} color={(!todayWorkout || todayWorkout.length === 0) ? 'var(--text-muted)' : '#fff'} />
+              </button>
+              <div>
+                <p style={{
+                  fontSize: '0.72rem', fontWeight: 600, color: 'var(--accent)',
+                  textTransform: 'uppercase', letterSpacing: '0.1em',
+                }}>Workout of the Day</p>
+                <h2 style={{
+                  margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)',
+                }}>
+                  {todayWorkout ? (todayWorkout.length > 0 ? 'Training Day' : 'Rest Day') : (loading ? 'Loading...' : 'Rest Day')}
+                </h2>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.85rem', maxWidth: '600px', marginBottom: '1.25rem' }}>
+              {todayWorkout
+                ? `You have ${todayWorkout.length || 0} exercises scheduled for today. Ready to crush it?`
+                : 'No active plan or scheduled workout for today. Enjoy your rest or create a new plan.'}
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate('/workout')}
+                disabled={!todayWorkout}
+              >
+                <Zap size={16} /> Start Training
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => navigate('/weekly-plans')}
+              >
+                <Calendar size={16} /> Manage Plans
+              </button>
+            </div>
+          </GlassCard>
+        </motion.div>
+
+        {/* Bottom Grid */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '1.25rem',
+        }}>
+          {/* Recovery */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <GlassCard variant="light" style={{ height: '100%' }}>
+              <h4 style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                marginBottom: '1rem', color: 'var(--text-primary)', fontSize: '1rem',
+              }}>
+                <HeartPulse size={18} color="var(--accent)" /> Recovery Protocol
+              </h4>
+              {loading ? (
+                <div style={{ opacity: 0.5, fontWeight: 500, fontSize: '0.85rem' }}>
+                  Generating AI recovery plan...
+                </div>
+              ) : (
+                <div style={{
+                  fontSize: '0.85rem', whiteSpace: 'pre-wrap', lineHeight: 1.7,
+                }}>
+                  {recoverySuggestions || 'No recovery suggestions available. Complete a workout first.'}
+                </div>
+              )}
+            </GlassCard>
+          </motion.div>
+
+          {/* Progress */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <GlassCard style={{ height: '100%' }}>
+              <h4 style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                marginBottom: '1rem', color: 'var(--text-primary)', fontSize: '1rem',
+              }}>
+                <TrendingUp size={18} color="var(--accent)" /> Progress Report
+              </h4>
+              {loading ? (
+                <div style={{ opacity: 0.5, fontWeight: 500, fontSize: '0.85rem' }}>
+                  Analyzing logs...
+                </div>
+              ) : (
+                <div style={{
+                  fontSize: '0.85rem', whiteSpace: 'pre-wrap', lineHeight: 1.7,
+                }}>
+                  {progressReport || 'Complete a workout to get your first AI progress report.'}
+                </div>
+              )}
+            </GlassCard>
+          </motion.div>
         </div>
       </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
-        
-        {/* Recovery Suggestions (Light) */}
-        <div className="card-light" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
-            <HeartPulse size={24} color="var(--accent-color)" /> RECOVERY PROTOCOL
-          </h4>
-          {loading ? (
-            <div style={{ opacity: 0.5, fontWeight: 600 }}>GENERATING AI RECOVERY PLAN...</div>
-          ) : (
-            <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', whiteSpace: 'pre-wrap', flex: 1, fontWeight: 500 }}>
-              {recoverySuggestions || 'No recovery suggestions available. Complete a workout first.'}
-            </div>
-          )}
-        </div>
-
-        {/* Progress Report (Black) */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.5rem', color: '#fff' }}>
-            <TrendingUp size={24} color="var(--accent-color)" /> PROGRESS REPORT
-          </h4>
-          {loading ? (
-            <div style={{ opacity: 0.5, color: '#aaa', fontWeight: 600 }}>ANALYZING LOGS...</div>
-          ) : (
-            <div style={{ color: '#aaa', fontSize: '0.95rem', whiteSpace: 'pre-wrap', fontWeight: 500 }}>
-              {progressReport || 'Complete a workout to get your first AI progress report.'}
-            </div>
-          )}
-        </div>
-      </div>
-
     </div>
   );
 };

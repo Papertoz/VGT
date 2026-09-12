@@ -1,140 +1,126 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Apple, Scale, Flame, Droplets } from 'lucide-react';
+import GlassCard from '../components/GlassCard';
+import { Apple, Scale, Droplets, Activity } from 'lucide-react';
 
 const ProgressNutrition = () => {
   const [activeTab, setActiveTab] = useState('nutrition');
 
   return (
     <div className="main-content">
-      <div style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        <div>
-          <h1 style={{ fontSize: '4rem', marginBottom: '0.5rem', color: 'var(--accent-color)' }}>FUEL & FIRE</h1>
-          <p style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>Track your nutrition and body metrics.</p>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        {/* Header */}
+        <div style={{ marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
+            Fuel & Fire
+          </h1>
+          <p style={{ fontSize: '0.85rem' }}>Track your nutrition and body metrics.</p>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
-        <button 
-          className="btn" 
-          style={{ 
-            background: activeTab === 'nutrition' ? 'var(--surface-color)' : '#fff', 
-            color: activeTab === 'nutrition' ? '#fff' : '#111', 
-            border: '1px solid #111' 
-          }}
-          onClick={() => setActiveTab('nutrition')}
-        >
-          <Apple size={18} /> MACROS & NUTRITION
-        </button>
-        <button 
-          className="btn" 
-          style={{ 
-            background: activeTab === 'progress' ? 'var(--surface-color)' : '#fff', 
-            color: activeTab === 'progress' ? '#fff' : '#111', 
-            border: '1px solid #111' 
-          }}
-          onClick={() => setActiveTab('progress')}
-        >
-          <Scale size={18} /> BODY TRACKING
-        </button>
-      </div>
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
+          <button
+            className="btn"
+            style={{
+              background: activeTab === 'nutrition' ? 'var(--accent-subtle)' : 'var(--glass-bg-light)',
+              color: activeTab === 'nutrition' ? 'var(--accent)' : 'var(--text-secondary)',
+              border: `1px solid ${activeTab === 'nutrition' ? 'var(--border-accent)' : 'var(--border-light)'}`,
+            }}
+            onClick={() => setActiveTab('nutrition')}
+          >
+            <Apple size={16} /> Macros & Nutrition
+          </button>
+          <button
+            className="btn"
+            style={{
+              background: activeTab === 'progress' ? 'var(--accent-subtle)' : 'var(--glass-bg-light)',
+              color: activeTab === 'progress' ? 'var(--accent)' : 'var(--text-secondary)',
+              border: `1px solid ${activeTab === 'progress' ? 'var(--border-accent)' : 'var(--border-light)'}`,
+            }}
+            onClick={() => setActiveTab('progress')}
+          >
+            <Scale size={16} /> Body Tracking
+          </button>
+        </div>
 
-      {activeTab === 'nutrition' && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          
-          <div className="card" style={{ marginBottom: '2rem', borderLeft: '8px solid var(--accent-color)' }}>
-            <h3 style={{ color: 'var(--accent-color)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>TODAY'S TARGETS</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: '#888', fontWeight: 700, letterSpacing: '1px' }}>CALORIES</p>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '3.5rem', fontFamily: 'Anton', lineHeight: 1 }}>2,450</span>
-                  <span style={{ color: 'var(--accent-color)', fontWeight: 700, marginBottom: '0.5rem' }}>KCAL</span>
-                </div>
+        {activeTab === 'nutrition' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <GlassCard variant="glow" style={{ marginBottom: '1.5rem', borderLeft: '3px solid var(--accent)' }}>
+              <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>Today's Targets</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1.5rem' }}>
+                {[
+                  { label: 'Calories', value: '2,450', unit: 'KCAL' },
+                  { label: 'Protein', value: '180', unit: 'G' },
+                  { label: 'Carbs', value: '250', unit: 'G' },
+                  { label: 'Fats', value: '70', unit: 'G' },
+                ].map(item => (
+                  <div key={item.label}>
+                    <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.05em' }}>{item.label}</p>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem' }}>
+                      <span style={{ fontSize: '2rem', fontFamily: 'Outfit', fontWeight: 800, lineHeight: 1, color: 'var(--text-primary)' }}>{item.value}</span>
+                      <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: '0.72rem' }}>{item.unit}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: '#888', fontWeight: 700, letterSpacing: '1px' }}>PROTEIN</p>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '3.5rem', fontFamily: 'Anton', lineHeight: 1 }}>180</span>
-                  <span style={{ color: '#fff', fontWeight: 700, marginBottom: '0.5rem' }}>G</span>
+            </GlassCard>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <GlassCard variant="light">
+                <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+                  <Droplets size={18} color="var(--accent)" /> Hydration
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{
+                    flex: 1, background: 'var(--border)', height: '24px',
+                    borderRadius: 'var(--radius-sm)', position: 'relative', overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      position: 'absolute', top: 0, left: 0, bottom: 0, width: '60%',
+                      background: 'var(--gradient-accent)', borderRadius: 'var(--radius-sm)',
+                    }} />
+                  </div>
+                  <span style={{ fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>2.4 / 4L</span>
                 </div>
-              </div>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: '#888', fontWeight: 700, letterSpacing: '1px' }}>CARBS</p>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '3.5rem', fontFamily: 'Anton', lineHeight: 1 }}>250</span>
-                  <span style={{ color: '#fff', fontWeight: 700, marginBottom: '0.5rem' }}>G</span>
-                </div>
-              </div>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: '#888', fontWeight: 700, letterSpacing: '1px' }}>FATS</p>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '3.5rem', fontFamily: 'Anton', lineHeight: 1 }}>70</span>
-                  <span style={{ color: '#fff', fontWeight: 700, marginBottom: '0.5rem' }}>G</span>
-                </div>
-              </div>
+              </GlassCard>
+
+              <GlassCard variant="light" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <p style={{ fontWeight: 500, fontSize: '0.82rem' }}>* Full nutrition database API coming in v1.2</p>
+              </GlassCard>
             </div>
-          </div>
+          </motion.div>
+        )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-            <div className="card-light">
-              <h3 style={{ color: '#111', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Droplets color="var(--accent-color)" /> HYDRATION
+        {activeTab === 'progress' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <GlassCard style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1.1rem' }}>Log Body Measurements</h3>
+              <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                  {['Weight (kg)', 'Chest (cm)', 'Waist (cm)', 'Biceps (cm)'].map(field => (
+                    <div key={field}>
+                      <label>{field}</label>
+                      <input type="number" className="input-field" />
+                    </div>
+                  ))}
+                </div>
+                <button type="button" className="btn btn-primary" style={{ alignSelf: 'flex-start' }}
+                  onClick={() => alert('Progress saved locally! API sync coming soon.')}
+                >
+                  Save Metrics
+                </button>
+              </form>
+            </GlassCard>
+
+            <GlassCard variant="light">
+              <h3 style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+                <Activity size={18} color="var(--accent)" /> Recent Logs
               </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ flex: 1, background: '#eee', height: '30px', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '60%', background: 'var(--accent-color)' }} />
-                </div>
-                <span style={{ fontFamily: 'Anton', fontSize: '1.5rem' }}>2.4 / 4L</span>
-              </div>
-            </div>
-
-            <div className="card-light" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ color: 'var(--text-secondary)', fontWeight: 700 }}>* FULL NUTRITION DATABASE API COMING IN UPDATE V1.2</p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {activeTab === 'progress' && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ color: '#fff', marginBottom: '1.5rem', fontSize: '1.5rem' }}>LOG BODY MEASUREMENTS</h3>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                <div>
-                  <label style={{ color: '#aaa', fontWeight: 700, fontSize: '0.8rem', display: 'block', marginBottom: '0.5rem' }}>WEIGHT (KG)</label>
-                  <input type="number" className="input-field" style={{ background: '#222', color: '#fff', border: '1px solid #444' }} />
-                </div>
-                <div>
-                  <label style={{ color: '#aaa', fontWeight: 700, fontSize: '0.8rem', display: 'block', marginBottom: '0.5rem' }}>CHEST (CM)</label>
-                  <input type="number" className="input-field" style={{ background: '#222', color: '#fff', border: '1px solid #444' }} />
-                </div>
-                <div>
-                  <label style={{ color: '#aaa', fontWeight: 700, fontSize: '0.8rem', display: 'block', marginBottom: '0.5rem' }}>WAIST (CM)</label>
-                  <input type="number" className="input-field" style={{ background: '#222', color: '#fff', border: '1px solid #444' }} />
-                </div>
-                <div>
-                  <label style={{ color: '#aaa', fontWeight: 700, fontSize: '0.8rem', display: 'block', marginBottom: '0.5rem' }}>BICEPS (CM)</label>
-                  <input type="number" className="input-field" style={{ background: '#222', color: '#fff', border: '1px solid #444' }} />
-                </div>
-              </div>
-              <button type="button" className="btn btn-primary" style={{ alignSelf: 'flex-start' }} onClick={() => alert('Progress saved locally! API sync coming soon.')}>
-                SAVE METRICS
-              </button>
-            </form>
-          </div>
-
-          <div className="card-light">
-             <h3 style={{ color: '#111', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Activity color="var(--accent-color)" /> RECENT LOGS
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>No previous measurements found. Start tracking today.</p>
-          </div>
-        </motion.div>
-      )}
-
+              <p style={{ fontSize: '0.85rem', fontWeight: 500 }}>No previous measurements found. Start tracking today.</p>
+            </GlassCard>
+          </motion.div>
+        )}
+      </motion.div>
     </div>
   );
 };

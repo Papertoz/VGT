@@ -11,13 +11,24 @@ import Exercises from './pages/Exercises';
 import WeeklyPlans from './pages/WeeklyPlans';
 import ActiveWorkout from './pages/ActiveWorkout';
 import ProgressNutrition from './pages/ProgressNutrition';
+import ProfileSettings from './pages/ProfileSettings';
 
 // Route Guard Component
 const ProtectedRoute = ({ children }) => {
   const { currentUser, userProfile, loading } = useAuth();
 
-  if (loading) return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading System...</div>;
-  
+  if (loading) return (
+    <div style={{
+      padding: '3rem', textAlign: 'center',
+      color: 'var(--text-secondary)',
+      minHeight: '100vh', display: 'flex',
+      alignItems: 'center', justifyContent: 'center',
+      background: 'var(--bg-primary)',
+    }}>
+      Loading System...
+    </div>
+  );
+
   if (!currentUser) return <Navigate to="/login" replace />;
 
   // Force onboarding if profile is not complete
@@ -31,11 +42,11 @@ const ProtectedRoute = ({ children }) => {
 // Specifically for Onboarding (only accessible if logged in but incomplete)
 const OnboardingRoute = ({ children }) => {
   const { currentUser, userProfile, loading } = useAuth();
-  
+
   if (loading) return null;
   if (!currentUser) return <Navigate to="/login" replace />;
   if (userProfile && userProfile.isprofilecomplete) return <Navigate to="/dashboard" replace />;
-  
+
   return children;
 };
 
@@ -47,7 +58,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          
+
           {/* Semi-Protected Route (Logged in, Incomplete Profile) */}
           <Route path="/onboarding" element={
             <OnboardingRoute>
@@ -63,6 +74,7 @@ function App() {
             <Route path="/workout" element={<ActiveWorkout />} />
             <Route path="/nutrition" element={<ProgressNutrition />} />
             <Route path="/chat" element={<AIChat />} />
+            <Route path="/settings" element={<ProfileSettings />} />
           </Route>
         </Routes>
       </BrowserRouter>

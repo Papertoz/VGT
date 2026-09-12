@@ -35,6 +35,7 @@ const generateChatResponse = async (userId, userMessage) => {
         return outputMsg.content;
     } catch (error) {
         console.error("OpenAI Error:", error);
+        require('fs').writeFileSync('ai_error.log', String(error) + '\\n' + error.stack);
         throw new Error("Failed to generate AI response: " + error.message);
     }
 };
@@ -77,6 +78,7 @@ const generateProgressReport = async (userId) => {
         const result = await agent.invoke({ messages: [new HumanMessage(prompt)] });
         return result.messages[result.messages.length - 1].content;
     } catch (error) {
+        require('fs').writeFileSync('ai_error.log', String(error) + '\\n' + error.stack);
         throw new Error("Failed to generate progress report: " + error.message);
     }
 };
@@ -93,6 +95,7 @@ const getRecoverySuggestions = async (userId) => {
         const result = await agent.invoke({ messages: [new HumanMessage(prompt)] });
         return result.messages[result.messages.length - 1].content;
     } catch (error) {
+        require('fs').writeFileSync('ai_error.log', String(error) + '\\n' + error.stack);
         throw new Error("Failed to get recovery suggestions: " + error.message);
     }
 };
